@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JS image processing tests</title>
+</head>
+<style type="text/css">
+
+    body {
+        padding: 0;
+        font-family: sans-serif;
+    }
+
+    .preview-container {
+        width: 200px;
+        height: 200px;
+        overflow: hidden;
+        margin: 0 1em;
+    }
+
+    img {
+        display: inline-block;
+        vertical-align: top;
+        width: 100%;
+    }
+
+    canvas {
+        position: absolute;
+        top: 1em;
+        right: 1em;
+        /* canvas is scaled to fit window */
+        max-width: 75%;
+        max-height: 85%;
+    }
+
+    fieldset {
+        border: 0;
+    }
+
+    #inputs {
+        width: 100%;
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        background-color: #000;
+        color: #fff;
+        padding: 1em 0;
+    }
+
+    #controls {
+        wodth: 33%;
+        max-width: 300px;
+    }
+
+    #download-btn {
+        float: right;
+    }
+
+    label {
+        float: left;
+        clear: left;
+        width: 110px;
+    }
+
+    input {
+        float: left;
+    }
+
+</style>
+<body>
+    <div id="controls">
+        <h2>source image</h2>
+        <div class="preview-container">
+            <img id="preview">
+        </div>
+        <fieldset id="options">
+            <label>canvas width</label>
+            <input type="text" id="canvas-width" value="300" />
+            <label>canvas height</label>
+            <input type="text" id="canvas-height" value="300" />
+        </fieldset>
+        <fieldset>
+            <label>clear background</label>
+            <input type="checkbox" id="clear-bg" checked="checked" />
+            <label>sample size</label>
+            <input type="range" id="sample-size" min="1" max="25" value="2" />
+            <label>smear size</label>
+            <input type="range" id="smear-size" min="1" max="20" value="1" />
+            <label>skip size</label>
+            <input type="range" id="skip-size" min="0" max="15" step="4" value="0" />
+        </fieldset>
+    </div>
+    <div id="results">
+        <canvas width="300" height="300" id="canvas"></canvas>
+    </div>
+    <div id="inputs">
+        <input type="file" id="file-input" />
+        <button id="download-btn">Save result</button>
+    </div>
+    <script type="text/javascript" src="{{js}}"></script>
+</body>
+</html>

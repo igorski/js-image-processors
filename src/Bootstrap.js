@@ -1,8 +1,14 @@
 var CanvasHelper = require( "./helpers/CanvasHelper" );
 
-var cvs   = document.getElementById( "canvas" );
-var ctx   = cvs.getContext( "2d" );
-var tiles = [];
+/* application properties */
+
+var cvs = document.getElementById( "canvas" );
+var ctx = cvs.getContext( "2d" );
+var canvasHelper, w, h, outputSize, image;
+
+// the effect we're currently running (import from ./programs folder)
+
+var effect = require( "./programs/glitcher/Glitcher" );
 
 /* DOM elements */
 
@@ -10,13 +16,21 @@ var cvsWidth  = document.getElementById( "canvas-width" );
 var cvsHeight = document.getElementById( "canvas-height" );
 var clearBox  = document.getElementById( "clear-bg" );
 var download  = document.getElementById( "download-btn" );
-var input     = document.getElementById('file-input');
+var input     = document.getElementById( "file-input" );
+
+var sampleSize = document.getElementById( "sample-size" );
+var smearSize  = document.getElementById( "smear-size" );
+var skipSize   = document.getElementById( "skip-size" );
 
 /* event handlers */
 
-clearBox.onchange = draw;
+clearBox.onchange   =
+sampleSize.onchange =
+smearSize.onchange  = render;
 
-cvsWidth.onchange = cvsHeight.onchange = function( e )
+cvsWidth.onchange = cvsHeight.onchange = updateCanvasDimensions();
+
+function updateCanvasDimensions( aEvent )
 {
     var width  = parseInt( cvsWidth.value,  10 );
     var height = parseInt( cvsHeight.value, 10 );
@@ -25,30 +39,29 @@ cvsWidth.onchange = cvsHeight.onchange = function( e )
     cvs.height = height;
 
     render();
-};
+}
 
-input.onchange = function( e )
+input.onchange = function( aEvent )
 {
-    var img = new Image();
-    img.onload = function()
+    image = new Image();
+    image.onload = function()
     {
-        if ( canvasHelper ) {
-            canvasHelper.destroy();
-        }
-        canvasHelper = new CanvasHelper( img );
-        w            = img.naturalWidth;
-        h            = img.naturalHeight;
+        canvasHelper = new CanvasHelper( image );
+        w            = image.naturalWidth;
+        h            = image.naturalHeight;
         outputSize   = cvs.width / w;
 
         cvs.height = h / w * cvs.width;
 
-        document.getElementById( "preview" ).src = img.src;
+        cvsHeight.setAttribute( "value", cvs.height );
+
+        document.getElementById( "preview" ).src = image.src;
         render();
     };
-    img.src = URL.createObjectURL(e.target.files[0]);
+    image.src = URL.createObjectURL( aEvent.target.files[ 0 ]);
 };
 
-download.onclick = function(e)
+download.onclick = function( aEvent )
 {
     var pom = document.createElement( "a" );
     pom.setAttribute( "href", cvs.toDataURL( "image/jpeg" ));
@@ -56,25 +69,19 @@ download.onclick = function(e)
     pom.click();
 };
 
-function draw()
+function render()
 {
-   // requestAnimationFrame( draw );
+    if ( !image )
+        return;
+
+    // requestAnimationFrame( draw );
 
     ctx.fillStyle = "#FFFFFF";
 
     if ( clearBox.checked )
         ctx.fillRect( 0, 0, cvs.width, cvs.height );
 
-    for ( var i = 0; i < cvs.width; i += 20 )
-    {
-        ctx.fillStyle = "#FF00AE";
-        ctx.fillRect( i, 0, 1, cvs.height );
-    }
+    effect.render( ctx, cvs.width, cvs.height, canvasHelper, sampleSize.value, smearSize.value, skipSize.value );
 }
 
-var canvasHelper, w, h, outputSize, horizontalTileAmount, verticalTileAmount;
-
-function render()
-{
-    draw();
-}
+updateCanvasDimensions(); // force match to input field values on launch

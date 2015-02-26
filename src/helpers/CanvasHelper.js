@@ -7,18 +7,18 @@ module.exports = CanvasHelper;
  * Time: 21:24
  * To change this template use File | Settings | File Templates.
  */
-function CanvasHelper( imgEl )
+function CanvasHelper( image )
 {
-    this.imageElement = imgEl;
+    this.image = image;
 
     // prepare for crunching
     var canvas  = document.createElement( "canvas" );
     var context = canvas.getContext && canvas.getContext( "2d" );
 
-    this.height = canvas.height = imgEl.naturalHeight || imgEl.offsetHeight || imgEl.height;
-    this.width  = canvas.width  = imgEl.naturalWidth  || imgEl.offsetWidth  || imgEl.width;
+    this.height = canvas.height = image.naturalHeight || image.offsetHeight || image.height;
+    this.width  = canvas.width  = image.naturalWidth  || image.offsetWidth  || image.width;
 
-    context.drawImage( imgEl, 0, 0 );
+    context.drawImage( image, 0, 0 );
 
     try {
         this.data = context.getImageData( 0, 0, this.width, this.height ).data;
@@ -29,9 +29,14 @@ function CanvasHelper( imgEl )
     }
 }
 
-CanvasHelper.prototype.data;
-CanvasHelper.prototype.width;
-CanvasHelper.prototype.height;
+/* class properties */
+
+/** @public @type {Element} */   CanvasHelper.prototype.image;
+/** @public @type {ImageData} */ CanvasHelper.prototype.data;
+/** @public @type {number} */    CanvasHelper.prototype.width;
+/** @public @type {number} */    CanvasHelper.prototype.height;
+
+/* public methods */
 
 CanvasHelper.prototype.destroy = function()
 {
@@ -39,6 +44,10 @@ CanvasHelper.prototype.destroy = function()
 };
 
 /**
+ * retrieve the color currently present on the Canvas under
+ * given point with coordinates x and y or under given rect
+ * at coordinates x and y for a rectangle size of given blockSize
+ *
  * @public
  *
  * @param {number} x

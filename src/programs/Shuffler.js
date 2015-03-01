@@ -51,7 +51,7 @@ var Shuffler = module.exports =
             img.width = sampleWidth;
             img.height = sampleHeight;
 
-            img2 = ImageDisplacer.displace( img, 0, i % 2 == 0 ? i + verticalDisplace : -( i + verticalDisplace ));//( sampleHeight * ( i / totalSamples ) ));
+            img2 = ImageDisplacer.displace( img, 0, i % 2 === 0 ? i + verticalDisplace : sampleHeight - ( i + verticalDisplace ));//( sampleHeight * ( i / totalSamples ) ));
 
             samples.push( img2 );
         }
@@ -75,7 +75,7 @@ var Shuffler = module.exports =
         var imageWidth  = image.width;
         var imageHeight = image.height;
         var sampleWidth = imageWidth / sampleSize, sampleHeight = imageHeight;
-        var doen, i, l;
+        var rotate, i, l;
 
         // re-cache if properties have changed
 
@@ -87,22 +87,35 @@ var Shuffler = module.exports =
         }
         var targetWidth = Math.round( aWidth / samples.length );
 
+        var mpi = Math.PI / 180;
+        var slidesInCircle = smearSize;
+        var circleRadius = aWidth / 3;
+        var incrementRadians = ( 360 / slidesInCircle ) * mpi;
+        var radians = mpi, x, y;
+
         for ( i = 0, l = samples.length; i < l; ++i )
         {
+            x = i * targetWidth;
+            y = 0;
 
-            doen = false;//i % sampleSize == 0;
+            rotate = smearSize > 1;
 
-            if ( doen ) {
-                aContext.save();
-                aContext.translate( aWidth / 2, aHeight / 2 );
-                aContext.rotate( Math.PI / 4 );
-                aContext.translate( -aWidth / 2, -aHeight / 2 );
+            if ( rotate )
+            {
+                x = ( aWidth / 2  ) + Math.sin( radians ) * circleRadius;
+                y = ( aHeight / 2 ) + Math.cos( radians ) * circleRadius;
+
+                //aContext.save();
+                //aContext.translate( aWidth / 2, aHeight / 2 );
+                //aContext.rotate( radians );// Math.PI / 4 );
+                //aContext.translate( -aWidth / 2, -aHeight / 2 );
             }
             aContext.drawImage( samples[ i ], 0, 0, sampleWidth, sampleHeight,
-                                i * targetWidth, 0, targetWidth, aHeight );
+                                x, y, targetWidth, aHeight );
 
-            if ( doen ) {
-                aContext.restore();
+            if ( rotate ) {
+                //aContext.restore();
+                radians += incrementRadians;
             }
        }
 
@@ -110,6 +123,8 @@ var Shuffler = module.exports =
 //                            0, 0, aWidth, aHeight );
     }
 };
+
+// cached properties
 
 var samples;
 var lastSampleSize, lastSmearSize, lastSkipSize;

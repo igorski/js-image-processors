@@ -36,9 +36,13 @@ var ImageDisplacer = module.exports =
 
         if ( aHorizontalOffset < 0 )
             aHorizontalOffset -= aImage.width;
+        else if ( aHorizontalOffset >= aImage.width )
+            aHorizontalOffset = aHorizontalOffset - aImage.width;
 
         if ( aVerticalOffset < 0 )
-            aVerticalOffset = aImage.height - Math.abs( aVerticalOffset );
+            aVerticalOffset -= aImage.height - Math.abs( aVerticalOffset );
+        else if ( aVerticalOffset >= aImage.height )
+            aVerticalOffset = aVerticalOffset - aImage.height;
 
         var intermediateImage = ImageCloner.clone( aImage );
 
@@ -77,7 +81,7 @@ var ImageDisplacer = module.exports =
         ctx.drawImage( intermediateImage, 0, 0, intermediateImage.width, intermediateImage.height );
 
         var out = new Image();
-        out.src = cvs.toDataURL( "image/jpeg" );
+        out.src = cvs.toDataURL( "image/png" );
 
         return out;
     }

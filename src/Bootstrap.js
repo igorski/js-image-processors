@@ -47,7 +47,7 @@ input.onchange = function( aEvent )
     image = new Image();
     image.onload = function()
     {
-         image.onload = null;
+        image.onload = null;
         canvasHelper = new CanvasHelper( image );
         w            = image.naturalWidth;
         h            = image.naturalHeight;
@@ -72,8 +72,8 @@ input.onchange = function( aEvent )
 download.onclick = function( aEvent )
 {
     var pom = document.createElement( "a" );
-    pom.setAttribute( "href", cvs.toDataURL( "image/jpeg" ));
-    pom.setAttribute( "download", "image.jpg" );
+    pom.setAttribute( "href", cvs.toDataURL( "image/png" ));
+    pom.setAttribute( "download", "image.png" );
     pom.click();
 };
 

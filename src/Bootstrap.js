@@ -8,7 +8,7 @@ var canvasHelper, w, h, outputSize, image;
 
 // the effect we're currently running (import from ./programs folder)
 
-var effect = require( "./programs/glitcher/Glitcher" );
+var effect = require( "./programs/Shuffler" );
 
 /* DOM elements */
 
@@ -26,7 +26,8 @@ var skipSize   = document.getElementById( "skip-size" );
 
 clearBox.onchange   =
 sampleSize.onchange =
-smearSize.onchange  = render;
+smearSize.onchange  =
+skipSize.onchange   = render;
 
 cvsWidth.onchange = cvsHeight.onchange = updateCanvasDimensions();
 
@@ -46,6 +47,7 @@ input.onchange = function( aEvent )
     image = new Image();
     image.onload = function()
     {
+         image.onload = null;
         canvasHelper = new CanvasHelper( image );
         w            = image.naturalWidth;
         h            = image.naturalHeight;
@@ -56,6 +58,12 @@ input.onchange = function( aEvent )
         cvsHeight.setAttribute( "value", cvs.height );
 
         document.getElementById( "preview" ).src = image.src;
+
+        // allows us to pre-cache properties for the image
+
+        effect.prepare( ctx, cvs.width, cvs.height, canvasHelper,
+                        sampleSize.value, smearSize.value, skipSize.value );
+
         render();
     };
     image.src = URL.createObjectURL( aEvent.target.files[ 0 ]);
@@ -81,7 +89,7 @@ function render()
     if ( clearBox.checked )
         ctx.fillRect( 0, 0, cvs.width, cvs.height );
 
-    effect.render( ctx, cvs.width, cvs.height, canvasHelper, sampleSize.value, smearSize.value, skipSize.value );
+    effect.render( ctx, cvs.width, cvs.height, canvasHelper, parseInt( sampleSize.value, 10 ), parseInt( smearSize.value, 10 ), parseInt( skipSize.value, 10 ) );
 }
 
 updateCanvasDimensions(); // force match to input field values on launch

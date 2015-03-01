@@ -16,3 +16,8 @@ You can install Grunt (used to run the build tasks defined in Gruntfile.js) via 
 You can use the following task to serve the page with the experiment on localhost:3000
 
     grunt start
+
+## some notes
+
+Some of these filters require hefty amounts of processing, the tool was made to test and tweak on the
+fly, and to generate a high resolution image that can be saved locally and used in other projects.

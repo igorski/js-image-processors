@@ -5,6 +5,7 @@ var CanvasHelper = require( "./helpers/CanvasHelper" );
 var cvs = document.getElementById( "canvas" );
 var ctx = cvs.getContext( "2d" );
 var canvasHelper, w, h, outputSize, image;
+var renderPending = false;
 
 // the effect we're currently running (import from ./programs folder)
 
@@ -16,7 +17,7 @@ var cvsWidth  = document.getElementById( "canvas-width" );
 var cvsHeight = document.getElementById( "canvas-height" );
 var clearBox  = document.getElementById( "clear-bg" );
 var download  = document.getElementById( "download-btn" );
-var input     = document.getElementById( "file-input" );
+var fileInput = document.getElementById( "file-input" );
 
 var sampleSize = document.getElementById( "sample-size" );
 var smearSize  = document.getElementById( "smear-size" );
@@ -42,7 +43,7 @@ function updateCanvasDimensions( aEvent )
     render();
 }
 
-input.onchange = function( aEvent )
+fileInput.onchange = function( aEvent )
 {
     image = new Image();
     image.onload = function()
@@ -61,10 +62,13 @@ input.onchange = function( aEvent )
 
         // allows us to pre-cache properties for the image
 
-        effect.prepare( ctx, cvs.width, cvs.height, canvasHelper,
-                        sampleSize.value, smearSize.value, skipSize.value );
+        requestAnimationFrame( function()
+        {
+            effect.prepare( ctx, cvs.width, cvs.height, canvasHelper,
+                            sampleSize.value, smearSize.value, skipSize.value );
 
-        render();
+            render();
+        });
     };
     image.src = URL.createObjectURL( aEvent.target.files[ 0 ]);
 };
@@ -79,17 +83,25 @@ download.onclick = function( aEvent )
 
 function render()
 {
-    if ( !image )
+    if ( renderPending )
         return;
 
-    // requestAnimationFrame( draw );
+    requestAnimationFrame( function()
+    {
+        renderPending = false;
 
-    ctx.fillStyle = "#FFFFFF";
+        if ( !image )
+            return;
 
-    if ( clearBox.checked )
-        ctx.fillRect( 0, 0, cvs.width, cvs.height );
+        ctx.fillStyle = "#FFFFFF";
 
-    effect.render( ctx, cvs.width, cvs.height, canvasHelper, parseInt( sampleSize.value, 10 ), parseInt( smearSize.value, 10 ), parseInt( skipSize.value, 10 ) );
+        if ( clearBox.checked )
+            ctx.fillRect( 0, 0, cvs.width, cvs.height );
+
+        effect.render( ctx, cvs.width, cvs.height, canvasHelper, parseInt( sampleSize.value, 10 ), parseInt( smearSize.value, 10 ), parseInt( skipSize.value, 10 ) );
+    });
+
+    renderPending = true;
 }
 
 updateCanvasDimensions(); // force match to input field values on launch

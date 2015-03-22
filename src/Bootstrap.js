@@ -7,9 +7,13 @@ var ctx = cvs.getContext( "2d" );
 var canvasHelper, w, h, outputSize, image;
 var renderPending = false;
 
+// the programs available to us
+var shuffler = require( "./programs/Shuffler" );
+var voronoi  = require( "./programs/Voronoi" );
+
 // the effect we're currently running (import from ./programs folder)
 
-var effect = require( "./programs/Shuffler" );
+var effect = voronoi;
 
 /* DOM elements */
 

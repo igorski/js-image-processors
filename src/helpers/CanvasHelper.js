@@ -58,8 +58,9 @@ CanvasHelper.prototype.destroy = function()
  */
 CanvasHelper.prototype.getColor = function( x, y, blockSize, smear )
 {
-    var len = 4;    // amount of blocks per pixel (R,G,B,A)
-    var rgb = {r:0,g:0,b:0}; // no alpha ( would be fourth index )
+    var len = 4; // amount of blocks per pixel (R,G,B,A)
+    var rgb = { r : 0, g : 0, b : 0 }; // note no alpha ( would be 4th index )
+
     smear   = smear || 1;
 
     if ( x < 0 )

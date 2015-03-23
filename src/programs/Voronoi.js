@@ -1,5 +1,25 @@
 /**
- * Created by igorzinken on 22-03-15.
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2015 Igor Zinken
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
 var VoronoiCore = require( "./third_party/Voronoi_core" );
 
@@ -68,9 +88,6 @@ var Voronoi = module.exports =
 
         // calculate ratios
 
-        var ratioX = aWidth  / maxX;
-        var ratioY = aHeight / maxY;
-        console.log(ratioX,ratioY);
         Voronoi.core.recycle( Voronoi.diagram );
         Voronoi.diagram = Voronoi.core.compute( Voronoi.sites, Voronoi.bbox );
 
@@ -79,9 +96,6 @@ var Voronoi = module.exports =
             site = Voronoi.sites[ i ];
             Voronoi.colors.push( aCanvasHelper.getColor( Math.round( site.x ), Math.round( site.y ), 1 ));
         }
-        console.log(Voronoi.diagram);
-        // Voronoi calculate, now calculate average colors under the sites
-       // var rgb = canvasHelper.getColor( ix, iy, size, smear );
     },
 
     /**

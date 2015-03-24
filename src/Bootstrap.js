@@ -42,19 +42,24 @@ var effect;
 var cvsWidth      = document.getElementById( "canvas-width" );
 var cvsHeight     = document.getElementById( "canvas-height" );
 var clearBox      = document.getElementById( "clear-bg" );
+var store         = document.getElementById( "store-btn" );
 var download      = document.getElementById( "download-btn" );
 var programSelect = document.getElementById( "program-select" );
 var fileInput     = document.getElementById( "file-input" );
-var sampleSize    = document.getElementById( "sample-size" );
-var smearSize     = document.getElementById( "smear-size" );
-var skipSize      = document.getElementById( "skip-size" );
+var sampleSizeUI    = document.getElementById( "sample-size" );
+var smearSizeUI     = document.getElementById( "smear-size" );
+var skipSizeUI      = document.getElementById( "skip-size" );
+
+/* cached values */
+
+var lastsampleSizeUI, lastsmearSizeUI, lastskipSizeUI;
 
 /* event handlers */
 
 clearBox.onchange   =
-sampleSize.onchange =
-smearSize.onchange  =
-skipSize.onchange   = render;
+sampleSizeUI.onchange =
+smearSizeUI.onchange  =
+skipSizeUI.onchange   = render;
 
 cvsWidth.onchange = cvsHeight.onchange = updateCanvasDimensions;
 programSelect.onchange = changeProgram;
@@ -158,6 +163,20 @@ fileInput.onchange = function( aEvent )
 };
 
 /**
+ * invoked whenever the store button has been clicked
+ *
+ * @param {Event} aEvent
+ */
+store.onclick = function( aEvent )
+{
+    if ( sourceImage )
+    {
+        sourceImage.src = cvs.toDataURL( "image/png" );
+        resizeSourceImage( sourceImage );
+    }
+};
+
+/**
  * invoked whenever the download button has been clicked
  *
  * @param {Event} aEvent
@@ -204,11 +223,10 @@ function resizeSourceImage( aImage )
         ImageUtil.onReady( image, function()
         {
             effect.prepare( ctx, cvs.width, cvs.height, canvasHelper,
-                            sampleSize.value, smearSize.value, skipSize.value );
+                            sampleSizeUI.value, smearSizeUI.value, skipSizeUI.value );
 
-            render();
+            requestAnimationFrame( render );
         });
-
         resizePending = false;
     });
 }
@@ -222,21 +240,43 @@ function render()
     if ( renderPending )
         return;
 
-    requestAnimationFrame( function()
+    var sampleSize = parseInt( sampleSizeUI.value, 10 );
+    var smearSize  = parseInt( smearSizeUI.value, 10 );
+    var skipSize   = parseInt( skipSizeUI.value, 10 );
+
+    var internalRender = function()
     {
-        renderPending = false;
+        requestAnimationFrame( function()
+        {
+            renderPending = false;
 
-        if ( !image )
-            return;
+            if ( !image )
+                return;
 
-        ctx.fillStyle = "#FFFFFF";
+            ctx.fillStyle = "#FFFFFF";
 
-        if ( clearBox.checked )
-            ctx.fillRect( 0, 0, cvs.width, cvs.height );
+            if ( clearBox.checked )
+                ctx.fillRect( 0, 0, cvs.width, cvs.height );
 
-        effect.render( ctx, cvs.width, cvs.height, canvasHelper, parseInt( sampleSize.value, 10 ), parseInt( smearSize.value, 10 ), parseInt( skipSize.value, 10 ) );
-    });
+            effect.render( ctx, cvs.width, cvs.height, canvasHelper, sampleSize, smearSize, skipSize );
+        });
+    };
 
+    // re-cache if properties have changed
+
+    if ( lastsampleSizeUI !== sampleSizeUI ||
+         lastsmearSizeUI  !== smearSizeUI ||
+         lastskipSizeUI   !== skipSizeUI )
+    {
+        requestAnimationFrame( function()
+        {
+            effect.prepare( ctx, cvs.width, cvs.height, canvasHelper, sampleSize, smearSize, skipSize );
+            internalRender();
+        });
+    }
+    else {
+        internalRender();
+    }
     renderPending = true;
 }
 

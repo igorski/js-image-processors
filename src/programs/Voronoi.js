@@ -29,12 +29,7 @@ var Voronoi = module.exports =
     sites             : [],
     diagram           : null,
     margin            : 0.15,
-    canvas            : null,
     bbox              : { xl: 0, xr: 800, yt: 0, yb: 600 },
-    benchmarkTimer    : null,
-    benchmarkTimes    : new Array( 50 ),
-    benchmarkPointer  : 0,
-    benchmarkMaxSites : 100,
     colors            : [],
 
     /* public methods */
@@ -57,9 +52,9 @@ var Voronoi = module.exports =
         var clear = true;//false;
 
         if ( clear ) {
-            Voronoi.sites  = [];
-            Voronoi.colors = [];
-            Voronoi.core   = new VoronoiCore();
+            Voronoi.sites   = [];
+            Voronoi.colors  = [];
+            Voronoi.core    = new VoronoiCore();
         }
         var margin = Voronoi.margin * smearSize / 2;
 
@@ -112,14 +107,6 @@ var Voronoi = module.exports =
      */
     render : function( aContext, aWidth, aHeight, aCanvasHelper, sampleSize, smearSize, skipSize )
     {
-        // re-cache if properties have changed
-
-        if ( lastSampleSize !== sampleSize ||
-             lastSmearSize  !== smearSize ||
-             lastSkipSize   !== skipSize )
-        {
-            Voronoi.prepare( aContext, aWidth, aHeight, aCanvasHelper, sampleSize, smearSize, skipSize );
-        }
         // uncomment below to draw Voronoi outlines
         /*
         // background
@@ -171,9 +158,9 @@ var Voronoi = module.exports =
         aContext.fill();
         */
         // highlight cells
-        var i, v, color;
+        var i, l, v, color;
 
-        for ( i = 0; i < Voronoi.sites.length; ++i )
+        for ( i = 0, l = Voronoi.sites.length; i < l; ++i )
         {
             var cell = Voronoi.diagram.cells[ Voronoi.sites[ i ].voronoiId ];
             // there is no guarantee a Voronoi cell will exist for any
@@ -204,4 +191,3 @@ var Voronoi = module.exports =
 // cached properties
 
 var samples;
-var lastSampleSize, lastSmearSize, lastSkipSize;

@@ -100,14 +100,6 @@ var Shuffler = module.exports =
         var sampleWidth = imageWidth / sampleSize, sampleHeight = imageHeight;
         var rotate, i, l;
 
-        // re-cache if properties have changed
-
-        if ( lastSampleSize !== sampleSize ||
-             lastSmearSize  !== smearSize ||
-             lastSkipSize   !== skipSize )
-        {
-            Shuffler.prepare( aContext, aWidth, aHeight, aCanvasHelper, sampleSize, smearSize, skipSize );
-        }
         var targetWidth = Math.round( aWidth / samples.length );
 
         var mpi = Math.PI / 180;
@@ -150,4 +142,3 @@ var Shuffler = module.exports =
 // cached properties
 
 var samples;
-var lastSampleSize, lastSmearSize, lastSkipSize;

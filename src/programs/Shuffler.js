@@ -64,17 +64,19 @@ var Shuffler = module.exports =
         var img, img2;
         var totalSamples = Math.ceil( imageWidth / tmpCanvas.width );
         var verticalDisplace = imageHeight * ( skipSize / 100 );
-        for ( var i = 0; i < imageWidth; i += tmpCanvas.width )
+        var step = tmpCanvas.width;
+
+        for ( var i = 0, j = 0; i < imageWidth; i += step, ++j )
         {
             tmpCtx.drawImage( image, i, 0, sampleWidth, sampleHeight,
                               0, 0, sampleWidth, sampleHeight );
 
-            img = new Image();
-            img.src = tmpCanvas.toDataURL( "image/png" ); // PNG ensures 24-bit lossless quality
-            img.width = sampleWidth;
+            img         = new Image();
+            img.src    = tmpCanvas.toDataURL( "image/jpeg", .85 );//( "image/png" ); // PNG ensures 24-bit lossless quality
+            img.width  = sampleWidth;
             img.height = sampleHeight;
 
-            img2 = ImageDisplacer.displace( img, 0, i % 2 === 0 ? i + verticalDisplace : sampleHeight - ( i + verticalDisplace ));//( sampleHeight * ( i / totalSamples ) ));
+            img2 = ImageDisplacer.displace( img, 0, j % 2 === 0 ? i + verticalDisplace : sampleHeight - ( i + verticalDisplace ));//( sampleHeight * ( i / totalSamples ) ));
 
             samples.push( img2 );
         }
